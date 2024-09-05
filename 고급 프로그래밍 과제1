@@ -1,0 +1,78 @@
+package test;
+
+import java.awt.*;
+import java.util.*;
+
+
+interface Comparable{
+    int compareTo(Object obj);
+}
+
+class Fraction implements Comparable {
+
+    protected  int num,denom;
+    public  Fraction(int num,int denom){
+        this.num=num;
+        this.denom=denom;
+    }
+    public double getValue(){
+        return (double) num/denom;
+    }
+
+    public String toString(){
+        return num+"/"+denom;
+    }
+    public boolean equals(Object o){
+        if(this.getClass()==o.getClass()){
+            if(this.toString().equals(o.toString())){
+                return true;
+            }else return false;
+        }else return false;
+    }
+
+    public static void main(String[] args) {
+        Fraction f=new Fraction(1,2);
+        Fraction[] arr=new Fraction[50];
+        for (int i = 0; i < 50; i++) {
+            arr[i]=rndFraction();
+        }
+        System.out.println(maxFraction(arr).toString());
+    }
+
+
+    public static Fraction rndFraction(){
+        int a=(int)(Math.random()*10)+1;
+        int b=(int)(Math.random()*10)+1;
+        return new Fraction(a,b);
+    }
+
+    public int compareTo(Object obj){
+
+        Fraction o = (Fraction) obj;
+        return this.getValue() > o.getValue() ? 1 : (this.getValue() < o.getValue()) ? -1 : 0;
+    }
+
+    public static Fraction maxFraction(Fraction[] fArray) {
+        Fraction a=fArray[0];
+        for(Fraction n:fArray){
+            if(n.compareTo(a)>0){
+                a=n;
+            }
+        }
+        return a;
+    }
+}
+class ReduceFr extends Fraction{
+
+    public ReduceFr(int n,int d){
+
+        super(n,d);
+        super.num/=Getgcd(n,d);
+        super.denom/=Getgcd(n,d);
+
+    }
+    public int Getgcd(int a,int b){
+        if (b == 0) return a;
+        return Getgcd(b, a % b);
+    }
+}
