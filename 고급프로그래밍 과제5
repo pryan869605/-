@@ -1,0 +1,147 @@
+package homework;
+
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.util.*;
+
+//주석처리한 부분은 과제의 1번 내용 입니다.
+//현제 코드는 HashMap 을 이용해서 검색하고 정렬은 GenericList 를 사용합니다. GenericList의 이름은 my List 입니다.
+
+public class Student implements Comparable<Student> {
+    String name,major;
+    int num;
+    double aver;
+    public Student(String line){
+        String[] l=line.split(",");
+        if(l.length==1){
+            this.name=l[0];
+            return;
+        }
+        this.aver=Double.parseDouble(l[3]);
+        this.major=l[1];
+        this.name=l[0];
+        this.num=Integer.parseInt(l[2]);
+    }
+
+
+    @Override
+    public String toString(){
+        return this.name+" "+this.major+" "+this.num+" "+this.aver;
+    }
+    @Override
+    public int compareTo(Student o) {
+        return Double.compare(this.aver,o.aver);
+    }
+
+}
+class myList<T> {
+    private T[] elements;
+    private int size;
+    private int cur;
+
+    public myList(){
+        elements=(T[])new Object[20];
+        size=0;
+        cur=0;
+    }
+
+    public void add(T element) {
+
+        elements[size++] = element;
+    }
+    public T get(int n){
+        return elements[n];
+    }
+
+    public void sort(Comparator<? super T> comparator) {
+        Arrays.sort(elements, 0, size, comparator); // 배열 정렬
+    }
+    public void printarray(){
+       for(int i=0;i<size;i++){
+           System.out.println(elements[i].toString());//배열 출력
+       }
+    }
+
+    public int binarySearch(T key, Comparator<? super T> comparator) {
+        return Arrays.binarySearch(elements, 0, size, key, comparator); // 이진 탐색
+    }
+    public void hashcopy(HashMap<String,Student>a){
+        for(int i=0;i<size;i++){
+            Student s=(Student) elements[i];
+            a.put(s.name,s);
+        }
+    }
+
+}
+
+class fileSearch{
+
+    static int N;//개수;
+    public static void main(String[] args)  {
+        /*ArrayList<Student>arr = new ArrayList<>();*/
+        myList<Student> arr=new myList<>();// myList : GenericList
+        HashMap<String,Student>h=new HashMap<>();// 과제2번 hashmap을 통한 구현
+
+        try (Scanner scanner = new Scanner(new File("student2.txt"))) {// 컬랙션 or 제네릭리스트 구현;
+
+            while (scanner.hasNextLine()) {
+                String line = scanner.nextLine();
+
+                arr.add(new Student(line));
+                N++;
+            }
+
+
+        } catch (FileNotFoundException e) {
+            System.out.println("잘못된 입력");
+        }
+
+
+
+
+        arr.sort(Comparator.comparing(Student->Student.aver));//->>>>>>>>>> 제네릭 리스트 코드
+        arr.printarray();
+
+
+
+       /* Collections.sort(arr);*/ //기존의 Collecctions 로 구현한 코드들
+
+        /*for(Student n:arr){
+            System.out.println(n.toString());
+        }*/
+        Scanner s=new Scanner(System.in);
+        Comparator<Student> c=Comparator.comparing(Student-> Student.name);
+        arr.sort(c);
+
+
+
+        arr.hashcopy(h);
+
+
+        while(true){
+            String n=s.next();
+            if(n.equals("quit")) break;
+            /*int index=arr.binarySearch(new Student(n),c);
+            if(index<0){
+                System.out.println("Wrong");
+                continue;
+            }else{
+                System.out.println(arr.get(index));
+            }*/// 제네릭 리스트 코드
+            Student temp=h.get(n);
+            if(temp==null){
+                System.out.println("Wrong");
+            }
+            else{
+                System.out.println(temp.toString());
+            }
+
+
+
+        }
+    }
+
+
+
+}
