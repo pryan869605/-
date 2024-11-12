@@ -1,0 +1,109 @@
+package homework;
+
+import java.util.*;
+
+import static homework.Fraction.parseFractions;
+
+public class test implements Iterator<Fraction>{
+    private int cur=0;
+    List<Fraction> frList;
+    public static void main(String[] args) {
+        /*Fraction f1=new Fraction(1,3);
+        Fraction f2=new Fraction(2,6);
+
+        System.out.println(f1.Add(f2));*/
+        test t=new test();
+        t.frList=parseFractions("1/2,2/5,6/1,7/9");
+        Collections.sort(t.frList);
+        for(Fraction n:t.frList){
+            System.out.println(n.toString());
+        }
+    }
+
+    @Override
+    public boolean hasNext() {
+
+        return cur<frList.size();
+    }
+
+    @Override
+    public Fraction next() {
+        if(!hasNext()){
+            System.out.println("다음이 없음");
+            return null;
+        }else{
+            return frList.get(cur);
+        }
+    }
+}
+
+
+
+class Fraction  implements Comparable<Fraction> {
+    private int num, denom;
+
+    public Fraction(int n, int d) {
+        this.num = n;
+        this.denom = d;
+    }
+
+    public Fraction(String fNO){
+        String[]temp=fNO.split("/");
+        this.num=Integer.parseInt(temp[0]);
+        this.denom=Integer.parseInt(temp[1]);
+
+    }
+    public static List<Fraction> parseFractions(String fList) {
+        List<Fraction> cnoList = new ArrayList<>();
+        String[] temp=fList.split(",");
+        for (String s : temp) {
+            cnoList.add(new Fraction(s));
+        }
+        return cnoList;
+    }
+
+    private static int GCD(int a, int b) {
+
+        if (b == 0) return a;
+        return GCD(b, a % b);
+    }
+
+
+    public Fraction Add(Fraction f) {
+
+        int common = GCD(f.denom, this.denom);
+        int lcm = (f.denom * this.denom) / common;
+        int newNum1 = this.num * (lcm / this.denom);
+        int newNum2 = f.num * (lcm / f.denom);
+
+        return new Fraction(newNum1 + newNum2, lcm);
+    }
+
+    public String toString() {
+        return num + "/" + denom;
+    }
+
+    @Override
+    public boolean equals(Object o){
+
+        if(this==o){
+            return true;
+        }
+
+        if(o==null|| getClass()!=o.getClass()){
+            return false;
+        }
+        Fraction f=(Fraction) o;
+        return f.denom == this.denom && f.num == this.num;
+    }
+
+
+
+
+    @Override
+    public int compareTo(Fraction o) {
+
+        return Double.compare(((double) this.num /this.denom),((double) o.num /o.denom));
+    }
+}
+
